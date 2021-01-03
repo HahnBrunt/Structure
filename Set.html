@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      //集合封装(无序，元素不重复)
+      class Set {
+        constructor() {
+          this.items = {};
+        }
+        add(value) {
+          if (this.has(value)) {
+            return false;
+          }
+          this.items[value] = value;
+          return true;
+        }
+        remove(value) {
+          if (!this.has(value)) {
+            return false;
+          }
+          delete this.items[value];
+          return true;
+        }
+        has(value) {
+          return this.items.hasOwnProperty(value);
+        }
+        clear() {
+          this.items = {};
+          return true;
+        }
+        size() {
+          return Object.keys(this.items).length;
+        }
+        values() {
+          return Object.keys(this.items);
+        }
+        //---------集合间的操作--------
+        //并集
+        union(otherSet) {
+          let unionSet = new Set();
+          //将当前集合的value遍历添加到新集合
+          for (let value of this.items) {
+            unionSet.add(value);
+          }
+          for (let value of otherSet.values()) {
+            unionSet.add(value);
+          }
+          return otherSet;
+        }
+        //交集
+        intersection(otherSet) {
+          let intersectionSet = new Set();
+          // 从当前集合中取出每一个 value，判断是否在 otherSet 集合中存在
+          for (let value of this.values()) {
+            if (otherSet.has(value)) {
+              intersectionSet.add(value);
+            }
+          }
+          return intersectionSet;
+        }
+        //差集
+        difference(otherSet) {
+          let differenceSet = new Set();
+          //从当前集合中取出每一个 value，判断是否在 otherSet 集合中存在，不存在的即为差集
+          for (let value of this.values()) {
+            if (!otherSet.has(value)) {
+              differenceSet.add(value);
+            }
+          }
+          return differenceSet;
+        }
+        //子集
+        subset(otherSet) {
+          // 从当前集合中取出每一个 value，判断是否在 otherSet 集合中存在，有不存在的返回 false
+          // 遍历完所有的，返回 true
+          for (let value of this.values()) {
+            if (!otherSet.has(value)) {
+              return false;
+            }
+          }
+          return true;
+        }
+      }
+      let set = new Set();
+    </script>
+  </body>
+</html>

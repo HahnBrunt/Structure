@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      //*****hash表中key不能相同*****
+      //将字符串转成比较大的数字：hashCode    ****称作哈希化
+      //我们通常会将单词转化成大数字，把大数字进行哈希化的代码实现放在一个函数中    ****称作哈希函数
+      // 对最终数据插入的数组进行整个结构的封装，得到的就是哈希表
+      class Hash {
+        constructor() {
+          //数组存放我们的相关元素
+          this.storage = [];
+          //定义count表示当前已经存在多少数据
+          this.count = 0;
+          // 定义limit用来标记数组一共可以存放多少元素
+          this.limit = 8;
+          //装填因子
+          this.loadFactor = 0.75;
+          this.minLoadFactor = 0.25;
+        }
+        //哈希函数
+        hashFunction(str, size) {
+          //定义hashCode变量
+          let hashCode = 0;
+          //自己采用一个质数
+          let PRIME = 37;
+          //霍纳法则，计算hashCode的值
+          //cats -> Unicode编码
+          for (let i = 0; i < str.length; i++) {
+            // 获取某个字符对应的unicode编码
+            hashCode = PRIME * hashCode + str.charCodeAt(i);
+          }
+          //取余压缩插入数组
+          let index = hashCode % size;
+          return index;
+        }
+        //质数判断
+        isPrime(number) {
+          if (number <= 1) return false;
+          for (let i = 2; i < number; i++) {
+            if (number % i === 0) {
+              return false;
+            }
+          }
+          return true;
+        }
+        // getPrime(number) 根据传入的 number 获取最临近的质数 假如不是质数就一直循环
+        getPrime(number) {
+          while (!this.isPrime(number)) {
+            number++;
+          }
+          return number;
+        }
+      }
+      class HashTable extends Hash {
+        constructor() {
+          super();
+        }
+        put(key, value) {
+          //根据传入的key通过方法哈希化出index
+          let index = this.hashFunction(key, this.limit);
+          //根据index取出bucket
+          let bucket = this.storage[index];
+          //假如不存在这个bucket,那就新建一个bucket
+          if (bucket === undefined) {
+            bucket = [];
+            this.storage[index] = bucket;
+          }
+          for (let i = 0; i < bucket.length; i++) {
+            //用来存放key value的数组[key,value]
+            let tuple = bucket[i];
+            //假如这个tuple里面有相同的key 那就是修改数据
+            if (tuple[0] == key) {
+              tuple[1] = value;
+              return;
+            }
+          }
+          bucket.push([key, value]);
+          this.count++;
+          //判断哈希表是否需要扩容
+          if (this.count > this.limit * this.loadFactor) {
+            this.resize(this.getPrime(this.limit * 2));
+          }
+        }
+        get(key) {
+          //根据传入的key通过方法哈希化出index
+          let index = this.hashFunction(key, this.limit);
+          //根据index取出bucket
+          let bucket = this.storage[index];
+          if (bucket == undefined) {
+            return null;
+          }
+          for (let i = 0; i < bucket.length; i++) {
+            let tuple = bucket[i];
+            if (tuple[0] == key) {
+              return tuple[1];
+            }
+          }
+          return null;
+        }
+        remove(key) {
+          //根据传入的key通过方法哈希化出index
+          let index = this.hashFunction(key, this.limit);
+          //根据index取出bucket
+          let bucket = this.storage[index];
+          if (bucket == undefined) {
+            return null;
+          }
+          for (let i = 0; i < bucket.length; i++) {
+            let tuple = bucket[i];
+            if (tuple[0] == key) {
+              console.log(i);
+              bucket.splice(i, 1); // 删除对应位置的数组项
+              this.count--;
+            }
+            return tuple;
+          }
+          //判断哈希表是否需要扩容
+          if (this.count < this.limit * this.minLoadFactor) {
+            this.resize(this.getPrime(Math.floor(this.limit / 2)));
+          }
+        }
+        isEmpty() {
+          return this.count == 0;
+        }
+        size() {
+          return this.count;
+        }
+        //装填因子 = 哈希表中数据 / 哈希表长度，即 loadFactor = count / HashTable.length
+        resize(newLimit) {
+          //把原表的数据用变量存储
+          let oldStorage = this.storage;
+          //清空原表数据
+          this.storage = [];
+          this.count = 0;
+          this.limit = newLimit;
+          for (let i = 0; i < oldStorage.length; i++) {
+            let bucket = oldStorage[i];
+            if (bucket == null) {
+              continue;
+            }
+            for (let j = 0; j < bucket.length; j++) {
+              let tuple = bucket[j];
+              this.put(tuple[0], tuple[1]);
+            }
+          }
+        }
+      }
+      let hash = new HashTable();
+      hash.put("class1", "Tom");
+      hash.put("class2", "Gala");
+      hash.put("class3", "Why");
+      hash.put("class4", "Hahn");
+      hash.put("class5", "Wang");
+      hash.put("class6", "Long");
+      hash.put("class7", "Tom");
+      console.log(hash);
+    </script>
+  </body>
+</html>

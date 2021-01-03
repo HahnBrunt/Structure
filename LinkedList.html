@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      //节点类
+      class Node {
+        constructor(element) {
+          this.element = element;
+          this.next = null;
+        }
+      }
+      //单向链表
+      class LinkedList {
+        constructor() {
+          this.head = null;
+          //链表中节点的个数
+          this.length = 0;
+        }
+        append(element) {
+          //创建新节点
+          let newNode = new Node(element);
+          if (this.length == 0) {
+            //因为this.length==0,链表没有节点，所以让head指向新节点
+            this.head = newNode;
+          } else {
+            //让currentNode指向第一个节点
+            let currentNode = this.head;
+            // 循序依次找最后一个节点，即节点的 next 为 null 时停止
+            while (currentNode.next) {
+              currentNode = currentNode.next;
+            }
+            // 最后一个节点的 next 指向新节点
+            currentNode.next = newNode;
+          }
+          //追加完新节点后，链表长度 + 1
+          this.length++;
+        }
+        insert(position, element) {
+          //position边界判断
+          if (position < 0 || position > this.length) {
+            return false;
+          }
+          //创建新节点
+          let newNode = new Node(element);
+          if (position == 0) {
+            newNode.next = this.head;
+            this.head = newNode;
+          } else {
+            let index = 0;
+            //currentNode初始化（后面用来循环找出需要后移的节点）
+            let currentNode = this.head;
+            //previous是currentNode前一个节点
+            let previous = null;
+            //循环找出需要后移一位的节点
+            while (index < position) {
+              previous = currentNode;
+              currentNode = currentNode.next;
+              index++;
+            }
+            //让需要插入节点的下一个节点指向
+            newNode.next = currentNode;
+            //让需要插入的前一个节点指向需要插入的节点
+            previous.next = newNode;
+          }
+          this.length++;
+          return true;
+        }
+        get(position) {
+          //position边界判断
+          if (position < 0 || position >= this.length) {
+            return null;
+          }
+          //获取对应的element值
+          let current = this.head;
+          let index = 0;
+          while (index < position) {
+            current = current.next;
+            index++;
+          }
+          //直接返回需要查找的值
+          return current.element;
+        }
+        indexOf(element) {
+          let current = this.head;
+          let index = 0;
+          while (current) {
+            if ((current.element = element)) {
+              return index;
+            }
+            current = current.next;
+            index++;
+          }
+          //未在链表找到需要查找的元素
+          return -1;
+        }
+        update(position, newElement) {
+          //position边界判断
+          if (position < 0 || position >= this.length) {
+            return false;
+          }
+          //获取对应的element值
+          let current = this.head;
+          let index = 0;
+          while (index < position) {
+            current = current.next;
+            index++;
+          }
+          //current就是我们需要寻找的位置
+          current.element = newElement;
+          //直接返回需要查找的值
+          return true;
+        }
+        removeAt(position) {
+          //position边界判断
+          if (position < 0 || position >= this.length) {
+            return null;
+          }
+          if (position == 0) {
+            this.head = this.head.next;
+          } else {
+            let index = 0;
+            //currentNode初始化（后面用来循环找出需要后移的节点）
+            let currentNode = this.head;
+            //previous是currentNode前一个节点
+            let previous = null;
+            while (index < position) {
+              previous = currentNode;
+              currentNode = currentNode.next;
+              index++;
+            }
+            //前一个节点指向要删除节点的下一个节点
+            previous.next = currentNode.next;
+          }
+          this.length--;
+          return currentNode.element;
+        }
+        remove(element) {
+          let position = this.indexOf(element);
+          return this.removeAt(position);
+        }
+        isEmpty() {
+          return this.length == 0;
+        }
+        size() {
+          return this.length;
+        }
+        toString() {
+          let current = this.head;
+          let listString = "";
+          while (current) {
+            listString += current.element + " ";
+            current = current.next;
+          }
+          return listString;
+        }
+      }
+      //双向链表节点类
+      class DoublyNode extends Node {
+        constructor(element) {
+          super(element);
+          this.prev = null;
+        }
+      }
+      //双向链表实现
+      class DoublyLinkedList {
+        constructor() {
+          //头节点
+          this.head = null;
+          //尾节点
+          this.tail = null;
+          this.length = 0;
+        }
+        append(element) {
+          // 1、创建双向链表节点
+          let newNode = new DoublyNode(element);
+          if (this.length == 0) {
+            this.head = newNode;
+            this.tail = newNode;
+          } else {
+            newNode.prev = this.tail;
+            this.tail.next = newNode;
+            this.tail = newNode;
+          }
+          this.length++;
+        }
+        insert(element, position) {
+          // position 越界判断
+          if (position < 0 || position > this.length) return false;
+          // 创建双向链表节点
+          let newNode = new DoublyNode(element);
+          if (this.length == 0) {
+            this.head == newNode;
+            this.tail == newNode;
+          } else {
+            if (this.position == 0) {
+              this.head.prev = newNode;
+              newNode.next = this.head;
+              this.head = newNode;
+            } else if (this.position == this.length) {
+              //新节点的上一个节点等于原来的最后一个节点
+              newNode.prev = this.tail;
+              //原来节点的下一个节点等于新节点
+              this.tail.next = newNode;
+              //原来的节点等于新节点
+              this.tail = newNode;
+            } else {
+              //需要后移一位的节点
+              let current = this.head;
+              let index = 0;
+              while (index < position) {
+                current = current.next;
+                index++;
+              }
+              newNode.next = current;
+              newNode.prev = current.prev;
+              current.prev.next = newNode;
+              current.prev = newNode;
+            }
+          }
+          this.length++;
+          return true;
+        }
+        get(position) {
+          if (position < 0 || position > this.length) return null;
+          //二分查找
+          if (this.length / 2 > position) {
+            let current = this.head;
+            let index = 0;
+            while (index < position) {
+              current = current.next;
+              index++;
+            }
+            return current.element;
+          } else {
+            //最后一个节点
+            let tailCurrent = this.tail;
+            let index = this.length - 1;
+            while (index > position) {
+              tailCurrent = tailCurrent.prev;
+              index--;
+            }
+            return tailCurrent.element;
+          }
+        }
+        indexOf(element) {
+          let current = this.head;
+          let index = 0;
+          while (current) {
+            if (current.element == element) {
+              return index;
+            }
+            current = current.next;
+            index++;
+          }
+          return -1;
+        }
+        update(position, newElement) {
+          if (position < 0 || position >= this.length) return false;
+          if (this.length / 2 > position) {
+            let current = this.head;
+            let index = 0;
+            while (index < position) {
+              current = current.next;
+              index++;
+            }
+            current.element = newElement;
+            return true;
+          } else {
+            //最后一个节点
+            let tailCurrent = this.tail;
+            let index = this.length - 1;
+            while (index > position) {
+              tailCurrent = tailCurrent.prev;
+              index--;
+            }
+            tailCurrent.element = newElement;
+            return true;
+          }
+        }
+        removeAt(position) {
+          if (position < 0 || position >= this.length) return null;
+          let current = this.head;
+          if (this.length == 1) {
+            this.head = null;
+            this.tail = null;
+          } else {
+            if (position == 0) {
+              this.head.next.prev = null;
+              this.head = this.head.next;
+            } else if (position == this.length - 1) {
+              //要删除的是最有一个节点
+              current = this.tail;
+              this.tail.prev.next = null;
+              this.tail = this.tail.prev;
+            } else {
+              let index = 0;
+              while (index < position) {
+                current = current.next;
+                index++;
+              }
+              current.prev.next = current.next;
+              current.next.prev = current.prev;
+            }
+          }
+          this.length--;
+          return current.element;
+        }
+        remove(element) {
+          let index = this.indexOf(element);
+          return this.removeAt(index);
+        }
+        isEmpty() {
+          return this.length == 0 ? true : false;
+        }
+        size() {
+          return this.length;
+        }
+        toString() {
+          this.backwardString();
+        }
+        //反遍历
+        forwardString() {
+          let current = this.tail;
+          let resultString = "";
+          while (current) {
+            resultString += current.element + "";
+            current = current.prev;
+          }
+          return resultString;
+        }
+        //正遍历
+        backwardString() {
+          let current = this.head;
+          let resultString = "";
+          while (current) {
+            resultString += current.element + "";
+            current = current.next;
+          }
+          return resultString;
+        }
+      }
+      let list = new DoublyLinkedList();
+      list.append("111");
+      list.append("222");
+      list.append("333");
+      list.append("444");
+      list.append("555");
+      console.log(list);
+      console.log(list.backwardString());
+    </script>
+  </body>
+</html>

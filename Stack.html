@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      //@1.栈的封装
+      function Stack() {
+        this.items = [];
+        //栈中方法
+        Stack.prototype.push = function (element) {
+          this.items.push(element);
+        };
+        Stack.prototype.pop = function (element) {
+          return this.items.pop(element);
+        };
+        Stack.prototype.peek = function (element) {
+          return this.items[this.items.length - 1];
+        };
+        Stack.prototype.isEmpty = function () {
+          return this.items.length == 0 ? true : false;
+        };
+        Stack.prototype.size = function () {
+          return this.items.length;
+        };
+        Stack.prototype.toString = function () {
+          let string = "";
+          for (let i = 0; i < this.items.length; i++) {
+            string += this.items[i];
+          }
+          return string;
+        };
+      }
+      //   @2.十进制转二进制
+      function dec2bin(decNumber) {
+        let stack = new Stack();
+        while (decNumber > 0) {
+          stack.push(decNumber % 2);
+          decNumber = Math.floor(decNumber / 2);
+        }
+        let string = "";
+        while (!stack.isEmpty()) {
+          string += stack.pop();
+        }
+        return string;
+      }
+    </script>
+  </body>
+</html>

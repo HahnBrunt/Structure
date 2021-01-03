@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      class ArrayList {
+        constructor() {
+          this.array = [];
+        }
+        insert(item) {
+          this.array.push(item);
+        }
+        toString() {
+          return this.array.join();
+        }
+        //交换元素位置
+        swap(pre, last) {
+          let temp = this.array[pre];
+          this.array[pre] = this.array[last];
+          this.array[last] = temp;
+        }
+        //冒泡排序
+        Bubbling() {
+          let array = this.array;
+          for (let i = 0; i < array.length; i++) {
+            for (let j = 0; j < array.length - 1; j++) {
+              if (array[j] > array[j + 1]) {
+                this.swap(j, j + 1);
+              }
+            }
+          }
+          return array;
+        }
+      }
+      let list = new ArrayList();
+      list.insert(12);
+      list.insert(2);
+      list.insert(22);
+      list.insert(10);
+      list.insert(5);
+      list.insert(4);
+      list.insert(8);
+      list.insert(24);
+      list.insert(13);
+      list.insert(17);
+      list.insert(16);
+      console.log(list.Bubbling());
+    </script>
+  </body>
+</html>

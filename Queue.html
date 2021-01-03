@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      //@3.线性队列的封装
+      class Queue {
+        constructor() {
+          this.items = [];
+        }
+        enqueue(element) {
+          this.items.push(element);
+        }
+        dequeue() {
+          return this.items.shift();
+        }
+        front() {
+          return this.items[0];
+        }
+        isEmpty() {
+          return this.items.length == 0 ? true : false;
+        }
+        size() {
+          return this.items.length;
+        }
+        toString() {
+          let string = "";
+          for (let i = 0; i < this.items.length; i++) {
+            string += this.items[i];
+          }
+          return string;
+        }
+      }
+      //@4.击鼓传花
+      // function passGame(peopleList, number) {
+      //   let queue = new Queue();
+      //   for (let i = 0; i < peopleList.length; i++) {
+      //     queue.enqueue(peopleList[i]);
+      //   }
+      //   while (queue.size() > 1) {
+      //     //从0开始到number-1都不应该被淘汰。把它们添加到数组的末尾
+      //     for (let i = 0; i < number - 1; i++) {
+      //       queue.enqueue(queue.dequeue());
+      //     }
+      //     //前面的元素都添加到数值末尾了，这样只需要删除第一个元素
+      //     queue.dequeue();
+      //   }
+      //   return;
+      // }
+      //@5.优先级队列
+      class QueueElement {
+        constructor(element, priority) {
+          this.element = element;
+          this.priority = priority;
+        }
+      }
+      class PriorityQueue extends Queue {
+        constructor() {
+          super();
+        }
+        //重写插入方法
+        enqueue(element, priority) {
+          let queueElement = new QueueElement(element, priority);
+          //当队列里面没元素时，直接插入(第一个元素会直接push进去)
+          if (this.items.length === 0) {
+            this.items.push(queueElement);
+          } else {
+            //已经插入的元素和当要插入的元素一一比较(当前插入元素小于已经插入元素，就插入到该元素的前面)
+            let Switch = false;
+            for (let i = 0; i < this.items.length; i++) {
+              if (queueElement.priority < this.items[i].priority) {
+                this.items.splice(i, 0, queueElement);
+                Switch = true;
+                break;
+              }
+            }
+            //假如没有比前面插入的值的小(不用中间插入)
+            if (!Switch) {
+              this.items.push(queueElement);
+            }
+          }
+        }
+        dequeue() {
+          return super.dequeue();
+        }
+        front() {
+          return super.front();
+        }
+        isEmpty() {
+          return super.isEmpty();
+        }
+        size() {
+          return super.size();
+        }
+        // 重写 toString()
+        toString() {
+          let result = "";
+          for (let i = 0; i < this.items.length; i++) {
+            result +=
+              this.items[i].element + "-" + this.items[i].priority + " ";
+          }
+          return result;
+        }
+      }
+      let priorityQueue = new PriorityQueue();
+    </script>
+  </body>
+</html>
