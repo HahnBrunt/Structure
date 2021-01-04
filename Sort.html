@@ -18,10 +18,10 @@
           return this.array.join();
         }
         //交换元素位置
-        swap(pre, last) {
-          let temp = this.array[pre];
-          this.array[pre] = this.array[last];
-          this.array[last] = temp;
+        swap(left, right) {
+          let temp = this.array[left];
+          this.array[left] = this.array[right];
+          this.array[right] = temp;
         }
         //冒泡排序
         Bubbling() {
@@ -32,6 +32,52 @@
                 this.swap(j, j + 1);
               }
             }
+          }
+          return array;
+        }
+        //选择排序
+        Selection() {
+          let array = this.array;
+          for (let i = 0; i < array.length; i++) {
+            let minIndex = i;
+            for (let j = i + 1; j < array.length; j++) {
+              if (array[minIndex] > array[j]) {
+                minIndex = j;
+              }
+            }
+            this.swap(i, minIndex);
+          }
+          return array;
+        }
+        //插入排序
+        insertion() {
+          let array = this.array;
+          for (let i = 1; i < array.length; i++) {
+            let temp = array[i];
+            let j = i;
+            while (array[j - 1] > temp && j > 0) {
+              array[j] = array[j - 1];
+              j--;
+            }
+            array[j] = temp;
+          }
+          return array;
+        }
+        //希尔排序
+        shellSort() {
+          let array = this.array;
+          let gap = Math.floor(array.length / 2);
+          while (gap >= 1) {
+            for (let i = gap; i < array.length; i++) {
+              let temp = array[i];
+              let j = i;
+              while (array[j - gap] > temp && j > gap - 1) {
+                array[j] = array[j - gap];
+                j -= gap;
+              }
+              array[j] = temp;
+            }
+            gap = Math.floor(gap / 2);
           }
           return array;
         }
@@ -48,7 +94,7 @@
       list.insert(13);
       list.insert(17);
       list.insert(16);
-      console.log(list.Bubbling());
+      console.log(list.Selection());
     </script>
   </body>
 </html>
