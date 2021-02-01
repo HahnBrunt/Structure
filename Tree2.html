@@ -7,29 +7,31 @@
   </head>
   <body>
     <script>
+      //节点类
       class Node {
         constructor(key) {
-          this.key = key;
-          this.left = null;
-          this.right = null;
+          this.key = key; //节点中的键(就是值)
+          this.left = null; //左节点
+          this.right = null; //右节点
         }
       }
       class BinarySearchTree {
         constructor() {
-          // 根节点
-          this.root = null;
+          this.root = null; //根节点
         }
         insert(key) {
-          let newNode = new Node(key);
-          //判断有无根节点
+          //新建一个节点
+          let NewTreeNode = new Node(key);
+          //假如这个树不存在(没有根节点)
           if (this.root == null) {
-            this.root = newNode;
+            this.root = NewTreeNode;
           } else {
-            this.insertNode(this.root, newNode);
+            this.insertNode(this.root, NewTreeNode);
           }
         }
+        //一个根节点 一个新节点
         insertNode(node, newNode) {
-          //假如新节点小于root节点就向左查找,否则向右。
+          //假如新节点小于根节点就左边插入
           if (newNode.key < node.key) {
             if (node.left == null) {
               node.left = newNode;
@@ -44,57 +46,49 @@
             }
           }
         }
-        //先序遍历
         preOrderTraversal(handler) {
           this.preOrderTraversalNode(this.root, handler);
         }
         preOrderTraversalNode(node, handler) {
-          if (node !== null) {
-            //处理经过的节点
-            handler(node.key);
-            //处理经过节点的左子节点
+          if (node != null) {
+            //左子树节点
             this.preOrderTraversalNode(node.left, handler);
-            //处理经过节点的右子节点
+            //右子树节点
             this.preOrderTraversalNode(node.right, handler);
-          }
-        }
-        //中序遍历
-        midOrderTraversal(handler) {
-          this.midOrderTraversalNode(this.root, handler);
-        }
-        midOrderTraversalNode(node, handler) {
-          if (node != null) {
-            //1.遍历左子树中的节点
-            this.midOrderTraversalNode(node.left, handler);
-            //2.处理节点
-            handler(node.key);
-            //3.遍历右子树中的节点
-            this.midOrderTraversalNode(node.right, handler);
-          }
-        }
-        //后序遍历
-        postOrderTraversal(handler) {
-          this.postOrderTraversalNode(this.root, handler);
-        }
-        postOrderTraversalNode(node, handler) {
-          if (node != null) {
-            //1.遍历左子树中的节点
-            this.postOrderTraversalNode(node.left, handler);
-            //2.遍历右子树中的节点
-            this.postOrderTraversalNode(node.right, handler);
-            //3.处理节点
+            //处理经过的节点(节点的值)
             handler(node.key);
           }
+        }
+        max() {
+          //根节点
+          let node = this.root;
+          //需要返回的值
+          let key = null;
+          while (node != null) {
+            key = node.key;
+            node = node.right;
+          }
+          return key;
+        }
+        min() {
+          //根节点
+          let node = this.root;
+          //需要返回值
+          let key = null;
+          while (node != null) {
+            key = node.key;
+            node = node.left;
+          }
+          return key;
         }
         search(key) {
-          //1.获取根节点
+          //获取根节点
           let node = this.root;
-          //2.循环搜索key
           while (node != null) {
+            //传入的key小于根 向左查询
             if (key < node.key) {
-              //小于根(父)节点就往左边找
               node = node.left;
-              //大于根(父)节点就往右边找
+              //传入的key大于跟 向右查询
             } else if (key > node.key) {
               node = node.right;
             } else {
@@ -103,27 +97,16 @@
           }
           return false;
         }
-        min() {
-          let node = this.root;
-          while (node.left !== null) {
-            node = node.left;
-          }
-          return node.key;
-        }
-        max() {
-          let node = this.root;
-          while (node.right !== null) {
-            node = node.right;
-          }
-          return node.key;
-        }
         remove(key) {
-          //寻找要删除节点
+          //记录要删除的节点
           let current = this.root;
+          //要删除节点的父节点
           let parent = null;
+          //保存current是否为parent的左节点
           let isLeftChild = true;
-          while (current.key !== key) {
+          while (current.key != key) {
             parent = current;
+            //小于往左查询
             if (key < current.key) {
               isLeftChild = true;
               current = current.left;
@@ -135,10 +118,11 @@
               return false;
             }
           }
-          //情况1：删除的是叶子节点(没有子节点)
+          //循环完current.key=key
+          //情况一:删除是叶子节点(没有子节点)
           if (current.left == null && current.right == null) {
             if (current == this.root) {
-              parent.left = null;
+              this.root = null;
             } else if (isLeftChild) {
               parent.left = null;
             } else {
@@ -155,8 +139,9 @@
             } else {
               parent.right = current.left;
             }
-            //当current存在右子节点时
-          } else if (current.left == null) {
+          }
+          //当current存在右子节点时
+          else if (current.left == null) {
             if (current == this.root) {
               this.root = current.right;
             } else if (isLeftChild) {
@@ -200,21 +185,23 @@
           return successor;
         }
       }
-      let bst = new BinarySearchTree();
-      bst.insert(11);
-      bst.insert(3);
-      bst.insert(5);
-      bst.insert(8);
-      bst.insert(9);
-      bst.insert(13);
-      bst.insert(19);
-      bst.insert(17);
-      bst.insert(20);
-      let result = "";
-      bst.preOrderTraversal(function (key) {
-        result += key + " ";
-      });
-      console.log(result);
+      let tree = new BinarySearchTree();
+      tree.insert(10);
+      tree.insert(3);
+      tree.insert(5);
+      tree.insert(12);
+      tree.insert(22);
+      tree.insert(16);
+      tree.insert(17);
+      tree.insert(20);
+      let resultString = "";
+      //用来测试查看遍历顺序
+      function handler(key) {
+        resultString += key + "-";
+      }
+      tree.preOrderTraversal(this.handler);
+      //   console.log(resultString);
+      console.log(tree.search(22));
     </script>
   </body>
 </html>

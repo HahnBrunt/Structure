@@ -50,16 +50,22 @@
           return array;
         }
         //插入排序
-        insertion() {
+        insertSort() {
+          let current, preIndex;
           let array = this.array;
           for (let i = 1; i < array.length; i++) {
-            let temp = array[i];
-            let j = i;
-            while (array[j - 1] > temp && j > 0) {
-              array[j] = array[j - 1];
-              j--;
+            //当前元素的前一个元素
+            preIndex = i - 1;
+            // 将需要排序的元素用current保存起来以免因下面下标变化而取错值
+            current = array[i];
+            //开始内部循环将第一个值开始排序 终止条件为当前元素下标大于数组的第0位并且当前元素大于前一个元素,否则的话将前一个元素赋值给当前元素
+            //然后将前一个元素下标-1 继续向前比较
+            while (preIndex >= 0 && current < array[preIndex]) {
+              array[preIndex + 1] = array[preIndex];
+              preIndex--;
             }
-            array[j] = temp;
+            // 当current大于前一个元素时 把保存起来的current赋值给arr[preIndex]
+            array[preIndex + 1] = current;
           }
           return array;
         }
@@ -83,18 +89,156 @@
         }
       }
       let list = new ArrayList();
-      list.insert(12);
-      list.insert(2);
-      list.insert(22);
-      list.insert(10);
-      list.insert(5);
-      list.insert(4);
-      list.insert(8);
-      list.insert(24);
-      list.insert(13);
-      list.insert(17);
-      list.insert(16);
-      console.log(list.Selection());
+      //归并排序
+      function mergeSort(array) {
+        let length = array.length;
+        if (length === 1) {
+          return array;
+        }
+        let mid = Math.floor(length / 2), // 找到中间索引值
+          left = array.slice(0, mid), // 截取左半部分
+          right = array.slice(mid, length); // 截取右半部分
+        return merge(mergeSort(left), mergeSort(right)); // 递归分解后，进行排序合并
+      }
+      function merge(leftArray, rightArray) {
+        let result = [],
+          leftLength = leftArray.length,
+          rightLength = rightArray.length,
+          il = 0,
+          ir = 0;
+        // 左右两个数组的元素依次比较，将较小的元素加入结果数组中，直到其中一个数组的元素全部加入完则停止
+        while (il < leftLength && ir < rightLength) {
+          if (leftArray[il] < rightArray[ir]) {
+            result.push(leftArray[il++]);
+          } else {
+            result.push(rightArray[ir++]);
+          }
+        }
+        // 如果是左边数组还有剩余，则把剩余的元素全部加入到结果数组中。
+        while (il < leftLength) {
+          result.push(leftArray[il++]);
+        }
+        // 如果是右边数组还有剩余，则把剩余的元素全部加入到结果数组中。
+        while (ir < rightLength) {
+          result.push(rightArray[ir++]);
+        }
+        return result;
+      }
+
+      //快速排序
+      function quickSort(arr) {
+        if (arr.length <= 1) {
+          return arr;
+        }
+        let pivotIndex = Math.floor(arr.length / 2); //找到数组中间项
+        let pivot = arr.splice(pivotIndex, 1)[0]; //获取这一项的结果(并且移除)
+        let left = [];
+        let right = [];
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i] < pivot) {
+            left.push(arr[i]);
+          } else {
+            right.push(arr[i]);
+          }
+        }
+        return quickSort(left).concat([pivot], quickSort(right));
+      }
+
+      //计数排序
+      function countingSort(array) {
+        let maxValue = Math.max(...array);
+        let bucket = new Array(maxValue + 1);
+        for (let i = 0; i < array.length; i++) {
+          if (!bucket[array[i]]) {
+            bucket[array[i]] = 0;
+          }
+          bucket[array[i]]++;
+        }
+        console.log(bucket);
+        let sortedIndex = 0;
+        for (let j = 0; j < maxValue + 1; j++) {
+          while (bucket[j] > 0) {
+            array[sortedIndex++] = j;
+            bucket[j]--;
+          }
+        }
+        return array;
+      }
+      let array = [2, 3, 3, 3, 41, 41, 41, 4, 2, 312, 21, 12, 44, 55];
+      console.log(countingSort(array));
+      //堆排序
+      // function swap(array, i, j) {
+      //   let temp = array[i];
+      //   array[i] = array[j];
+      //   array[j] = temp;
+      // }
+      // // 将 i 结点以下的堆整理为大顶堆，注意这一步实现的基础实际上是：
+      // // 假设 结点 i 以下的子堆已经是一个大顶堆，shiftDown函数实现的
+      // // 功能是实际上是：找到 结点 i 在包括结点 i 的堆中的正确位置。后面
+      // // 将写一个 for 循环，从第一个非叶子结点开始，对每一个非叶子结点
+      // // 都执行 shiftDown操作，所以就满足了结点 i 以下的子堆已经是一大
+      // //顶堆
+      // function shiftDown(array, i, length) {
+      //   let temp = array[i]; // 当前父节点
+      //   // j<length 的目的是对结点 i 以下的结点全部做顺序调整
+      //   for (let j = 2 * i + 1; j < length; j = 2 * j + 1) {
+      //     temp = array[i]; // 将 A[i] 取出，整个过程相当于找到 A[i] 应处于的位置
+      //     if (j + 1 < length && array[j] < array[j + 1]) {
+      //       j++; // 找到两个孩子中较大的一个，再与父节点比较
+      //     }
+      //     if (temp < array[j]) {
+      //       swap(array, i, j); // 如果父节点小于子节点:交换；否则跳出
+      //       i = j; // 交换后，temp 的下标变为 j
+      //     } else {
+      //       break;
+      //     }
+      //   }
+      // }
+      // // 堆排序
+      // function heapSort(array) {
+      // 初始化大顶堆，从第一个非叶子结点开始
+      // for (let i = Math.floor(array.length / 2 - 1); i >= 0; i--) {
+      //   shiftDown(array, i, array.length);
+      // }
+      // // 排序，每一次for循环找出一个当前最大值，数组长度减一
+      // for (let i = Math.floor(array.length - 1); i > 0; i--) {
+      //   swap(array, 0, i); // 根节点与最后一个节点交换
+      //   shiftDown(array, 0, i); // 从根节点开始调整，并且最后一个结点已经为当
+      //   // 前最大值，不需要再参与比较，所以第三个参数
+      //   // 为 i，即比较到最后一个结点前一个即可
+      // }
+      // }
+      // let array = [4, 6, 8, 5, 9, 1, 2, 5, 3, 2];
+      // heapSort(array);
+      // alert(array);
+
+      //基数排序
+      // function radixSort(array, max) {
+      //   const buckets = [];
+      //   let unit = 10,
+      //     base = 1;
+      //   for (let i = 0; i < max; i++, base *= 10, unit *= 10) {
+      //     for (let j = 0; j < array.length; j++) {
+      //       let index = parseInt((array[j] % unit) / base); //依次过滤出个位，十位等等数字
+      //       if (buckets[index] == null) {
+      //         buckets[index] = []; //初始化桶
+      //       }
+      //       buckets[index].push(array[j]); //往不同桶里添加数据
+      //     }
+      //     let pos = 0,
+      //       value;
+      //     for (let j = 0; j < buckets.length; j++) {
+      //       if (buckets[j] != null) {
+      //         while ((value = buckets[j].shift()) != null) {
+      //           array[pos++] = value; //将不同桶里数据挨个捞出来，为下一轮高位排序做准备，由于靠近桶底的元素排名靠前，因此从桶底先捞
+      //         }
+      //       }
+      //     }
+      //   }
+      //   return array;
+      // }
+      // let array = [3, 44, 38, 5, 47, 15, 36, 26, 27, 2, 46, 4, 19, 50, 48, 222];
+      // console.log(radixSort(array, 3));
     </script>
   </body>
 </html>

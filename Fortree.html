@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      var tree = {
+        value: "-",
+        left: {
+          value: "+",
+          left: { value: "a" },
+          right: {
+            value: "*",
+            left: { value: "b" },
+            right: { value: "c" },
+          },
+        },
+        right: { value: "/", left: { value: "d" }, right: { value: "e" } },
+      };
+      //递归遍历
+      //   let result = [];
+      //   function dfs(node) {
+      //     if (node) {
+      //       result.push(node.value);
+      //       dfs(node.left);
+      //       dfs(node.right);
+      //     }
+      //   }
+      //   dfs(tree);
+      //   console.log(result);
+      //1.非递归遍历
+      //1.1前序遍历
+      function dfs1(nodes) {
+        if (!nodes) {
+          return [];
+        }
+        let result = [];
+        let stack = [];
+        stack.push(nodes);
+        while (stack.length > 0) {
+          let node = stack.pop();
+          result.push(node.value);
+          if (node.right) {
+            stack.push(node.right);
+          }
+          if (node.left) {
+            stack.push(node.left);
+          }
+        }
+        return result;
+      }
+      console.log(dfs1(tree), "前序");
+      //1.2中序遍历
+      function dfs2(nodes) {
+        if (!nodes) {
+          return [];
+        }
+        let result = [];
+        let stack = [];
+        while (stack.length !== 0 || nodes) {
+          while (nodes) {
+            stack.push(nodes);
+            nodes = nodes.left;
+          }
+          nodes = stack.pop();
+          result.push(nodes.value);
+          nodes = nodes.right;
+        }
+        return result;
+      }
+      //1.2中序遍历
+      function dfs4(nodes) {
+        if (!nodes) {
+          return [];
+        }
+        let result = [];
+        let stack = [];
+        while (stack.length > 0 || nodes) {
+          if (nodes) {
+            stack.push(nodes);
+            nodes = nodes.left;
+          } else {
+            nodes = stack.pop();
+            result.push(nodes.value);
+            nodes = nodes.right;
+          }
+        }
+        return result;
+      }
+      console.log(dfs4(tree), "中序");
+      console.log(dfs2(tree), "中序");
+      //1.3后序遍历
+      function dfs3(nodes) {
+        if (!nodes) {
+          return [];
+        }
+        let result = [];
+        let stack = [];
+        stack.push(nodes);
+        while (stack.length) {
+          let node = stack.pop();
+          result.unshift(node.value);
+          if (node.left) stack.push(node.left);
+          if (node.right) stack.push(node.right);
+        }
+        return result;
+      }
+      console.log(dfs3(tree), "后序");
+      //1.4层序遍历
+      /**
+       * 使用这种复杂度高
+       * while(stack.length){
+       *    let node=stack.shift()
+       * }
+       */
+      function bfs(nodes) {
+        if (!nodes) {
+          return [];
+        }
+        let result = [];
+        let stack = [];
+        stack.push(nodes);
+        let pointer = 0;
+        while (pointer < stack.length) {
+          let node = stack[pointer++];
+          result.push(node.value);
+          if (node.left) {
+            stack.push(node.left);
+          }
+          if (node.right) {
+            stack.push(node.right);
+          }
+        }
+        return result;
+      }
+      console.log(bfs(tree), "层序");
+    </script>
+  </body>
+</html>
