@@ -89,7 +89,7 @@
           let current = this.head;
           let index = 0;
           while (current) {
-            if ((current.element = element)) {
+            if (current.element == element) {
               return index;
             }
             current = current.next;
@@ -159,6 +159,7 @@
           return listString;
         }
       }
+
       //双向链表节点类
       class DoublyNode extends Node {
         constructor(element) {
